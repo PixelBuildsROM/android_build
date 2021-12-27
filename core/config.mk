@@ -296,6 +296,7 @@ FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
 
 -include vendor/extra/BoardConfigExtra.mk
 ifneq ($(PIXELBUILDS_BUILD),)
+$(error, "PB Build")
 include vendor/pixelbuilds/config/BoardConfig.mk
 endif
 
