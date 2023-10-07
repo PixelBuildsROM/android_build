@@ -36,6 +36,30 @@ define generate-common-build-props
     echo "# from generate-common-build-props" >> $(2);\
     echo "# These properties identify this partition image." >> $(2);\
     echo "####################################" >> $(2);\
+    $(if $(filter true,$(ZYGOTE_FORCE_64)),\
+        $(if $(filter vendor,$(1)),\
+            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist32=" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+        )\
+    ,\
+        $(if $(filter system vendor odm,$(1)),\
+            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+        )\
+    )\
+    echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
+    echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
+    echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.id=$(BUILD_ID)" >> $(2);\
+    echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
+    echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
+    echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION_LAST_STABLE)" >> $(2);\
+    echo "ro.$(1).build.version.release_or_codename=$(PLATFORM_VERSION)" >> $(2);\
+    echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
+    ';\
     $(if $(filter system,$(1)),\
         echo "ro.product.$(1).brand=$(PRODUCT_SYSTEM_BRAND)" >> $(2);\
         echo "ro.product.$(1).device=$(PRODUCT_SYSTEM_DEVICE)" >> $(2);\
@@ -65,30 +89,6 @@ define generate-common-build-props
             echo "ro.product.manufacturer_for_attestation=$(PRODUCT_MANUFACTURER_FOR_ATTESTATION)" >> $(2);\
         fi; \
     )\
-    $(if $(filter true,$(ZYGOTE_FORCE_64)),\
-        $(if $(filter vendor,$(1)),\
-            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
-            echo "ro.$(1).product.cpu.abilist32=" >> $(2);\
-            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
-        )\
-    ,\
-        $(if $(filter system vendor odm,$(1)),\
-            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST)" >> $(2);\
-            echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
-            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
-        )\
-    )\
-    echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
-    echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
-    echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
-    echo "ro.$(1).build.id=$(BUILD_ID)" >> $(2);\
-    echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
-    echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
-    echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
-    echo "ro.$(1).build.version.release=$(PLATFORM_VERSION_LAST_STABLE)" >> $(2);\
-    echo "ro.$(1).build.version.release_or_codename=$(PLATFORM_VERSION)" >> $(2);\
-    echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
-    ';\
 
 endef
 
