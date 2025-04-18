@@ -176,9 +176,13 @@ endif
 # non-default dev keys (usually private keys from a vendor directory).
 # Both of these tags will be removed and replaced with "release-keys"
 # when the target-files is signed in a post-build step.
+ifneq ($(filter vendor/pb-priv/%,$(DEFAULT_SYSTEM_DEV_CERTIFICATE)),)
+BUILD_KEYS := release-keys
+else
 BUILD_KEYS := release-keys
 BUILD_VERSION_TAGS += $(BUILD_KEYS)
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
+endif
 
 # BUILD_FINGERPRINT is used used to uniquely identify the combined build and
 # product; used by the OTA server.
